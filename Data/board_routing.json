@@ -1,0 +1,192 @@
+[
+  {
+    "board_name": "L1: Rapid Response",
+    "board_id": 150,
+    "tasks": [
+      "Login/Password issues (reset, locked, etc.)",
+      "Add/remove/update distribution lists",
+      "Mailbox/calendar access and troubleshooting",
+      "MFA/DUO enrollment on new device",
+      "Basic Peripheral/Hardware issues (monitors, mice, keyboards, phones, headsets, etc.)",
+      "Mobile Device issues",
+      "Software/application management and requests (installation, removal, missing applications, access)",
+      "ALL O365 app requests and troubleshooting (Word, Excel, Outlook including add-ins, Teams, O365, copilot, OneDrive, etc.)",
+      "Adobe Reader/Acrobat, Chrome/Edge, etc.",
+      "Communication and video application troubleshooting (Teams, Zoom, video calls, etc.)",
+      "Shared drive issues",
+      "Remote access issues (LogMeIn, remote desktop, etc.)",
+      "Spam filtering",
+      "VPN access/troubleshooting",
+      "Security group add/remove",
+      "Access requests for travel (trips, vacation, remote work, etc.)",
+      "Internet connectivity issues",
+      "User account(s) cleanup requests",
+      "Sophos issues"
+    ]
+  },
+  {
+    "board_name": "L2: Client Care",
+    "board_id": 151,
+    "rules": [
+      "Company equals 'Phlow Corporation'",
+      "Police department tickets go to L2 regardless of the issue.",
+      "Missing files go to NOC"
+    ],
+    "tasks": [
+      "Access requests for secure messages and banking systems",
+      "SharePoint site creation",
+      "Workstation/laptop setup (hardware replacement, reimaging, laptop reassignment, and new employee setup with or without applications)",
+      "Workstation/laptop troubleshooting (performance issues, hardware problems, equipment failures/issues)",
+      "Printing/Scanning/Faxing & MFPs (basic access/troubleshooting; new printer/MFP setup; scan to folder/email)",
+      "Deployment (GPO, Printix, etc.)",
+      "BitLocker issues",
+      "Disk/drive space (usage & alerts)",
+      "Warranty & power peripherals (warranty repair/replacement; UPS/PDU issues)",
+      "Application/software incidents, support, updates and upgrades, and crashes (troubleshooting, investigation, and resolution)",
+      "website access and/or Web filtering (allow/block site access)",
+      "Scan remediations",
+      "SSL certificate troubleshooting/management (renewal, installation, missing certificates, expired certificates, etc.)",
+      "ANY ticket for Police Departments",
+      "Anything that has taken > 45 minutes from L1",
+      "ADSync/EntraSync issues",
+      "Order support (renewal and troubleshooting) and delivery issues",
+      "Backup support and troubleshooting",
+      "Configurator issues (troubleshooting, restarts, and requests)",
+      "Dropbox sync/uninstall/reinstall issues",
+      "RDS profile/user login issues",
+      "Shortcut/software icon failures",
+      "Device decommissioning (domain unjoin, Intune removal)",
+      "File/document/pdf issues (retrieval, opening, corruption, format problems, and troubleshooting)",
+      "Special file/application viewer requests (e.g., HEIC file)",
+      "Foundation application/reporting issues (non-security)",
+      "Missing drives",
+      "MS Project desktop/SharePoint integration issues",
+      "Adobe Pro installs requiring admin",
+      "eIVF application support (ultrasound connectivity, DICOM integration, stability issues)",
+      "website access and/or content filtering",
+      "ANY Virtual Machine (VM) troubleshooting or issues (including restarts)",
+      "Development environment permission requests (admin access, elevated privileges for dev tools)",
+      "Multiple people affected like group-wide problems, application down, and service outages (phones down, email issues, group-wide problems)"
+    ]
+  },
+  {
+    "board_name": "L3: Specialized Technology Team",
+    "board_id": 149,
+    "tasks": [
+      "Power/ISP outage, Network Outage",
+      "Port opening/firewall rules",
+      "Network troubleshooting(Wireless/Wired)",
+      "Switch changes/modifications",
+      "Public DNS changes - Networking Team",
+      "MX, DKIM, A Record, CNAME, SPF, Modem",
+      "Server troubleshooting",
+      "Infrastructure/hardware troubleshooting",
+      "Critical incidents (multiple users, multiple sites)",
+      "Critical Labtech alerts",
+      "All permission assignments/changes (file/folder and user)",
+      "SharePoint permissions changes",
+      "Elevated permissions for installation/execution of specialized, internal, custom applications, or executable files (.exe) requiring admin credentials",
+      "Domain transfer requested/complete",
+      "Virtual Machine (VM) monitoring, decommissioning, or setup",
+      "Email connector troubleshooting",
+      "Windows OS updates requiring security tool management"
+    ]
+  },
+  {
+    "board_name": "Security",
+    "board_id": 35,
+    "tasks": [
+      "Phishing, suspicious emails, email analysis, spam investigation, phish alert, email legitimacy verification",
+      "Request for SPAM to be blocked, unblocked, or checked for SPAM content",
+      "ThreatLocker alerts, blocks, learning mode, application blocks, elevation requests",
+      "KnowBe4 training, security awareness training, mandatory training, KB4 issues",
+      "SentinelOne alerts, threats, incidents, agent issues, rollback, quarantine (NOT deployments)",
+      "Malware, virus, virus detection, threat detection",
+      "Dark web monitoring, password exposure, dark web password alerts",
+      "Website blocking, web filtering, blocked sites",
+      "Perch alerts, SIEM alerts, sensor offline, sensor online, sensor status, log shipper issues",
+      "Defender for Cloud Apps, Microsoft Defender, Windows Defender",
+      "Bitdefender, CrowdStrike, CRU, security software alerts",
+      "Vulnerability scanning, subscription vulnerability, scan schedules",
+      "MFA bypass, whitelist requests, authentication issues"
+    ]
+  },
+  {
+    "board_name": "Security - Engineering",
+    "board_id": 154,
+    "tasks": [
+      "Frontline Vulnerability Scanning QC",
+      "SentinelOne QC, Deploy SentinelOne Agent, SentinelOne agent deployment, S1 deployment QC"
+    ]
+  },
+  {
+    "board_name": "Security - Risk Advisory",
+    "board_id": 155,
+    "tasks": [
+      "Request for feedback on data protection requirements"
+    ]
+  },
+  {
+    "board_name": "Network Operations Center",
+    "board_id": 52,
+    "tasks": [
+      "Backup alerts, backup failures, and backup validation",
+      "Backup restoration and recovery",
+      "Disaster Recovery (DR) requests and issues",
+      "Missing file/document (backup/restoration related)",
+      "Host off-boarding and RMM removal",
+      "RMM device decommissioning",
+      "RMM review and removal requests",
+      "Script execution and management",
+      "RMM Access requests (Connectwise, QP Access, ITGlue Access)",
+      "Decommission or removal of Sourcepass tools (RMM, Auvik, CyberQP, ITGlue, ScreenConnect, etc.)"
+    ]
+  },
+  {
+    "board_name": "Client Strategy",
+    "board_id": 54,
+    "tasks": [
+      "Client requests to update or remove Quest/Streamline forms",
+      "Assistance with DDQs, security questionnaires, or audits",
+      "Requests for hardware/accessory quotes including disposal",
+      "General strategic client process or policy changes",
+      "Audit exhibit/document requests (supporting client auditors or internal audit needs)"
+    ]
+  },
+  {
+    "board_name": "Help Desk",
+    "board_id": 3,
+    "keywords": [
+      "We detected synchronization errors in your directory",
+      "Connect Sync Service is not running",
+      "3 CPU Credits Exhausted"
+    ],
+    "tasks": [
+      "Standard equipment orders (headsets, keyboards, mice, etc.)",
+      "Drop-ship order tracking",
+      "General order confirmations (including license/order agreements such as NCE agreements)",
+      "New hire appointment scheduling (including coordinating device availability for onboarding)",
+      "Check order status"
+    ]
+  },
+  {
+    "board_name": "Service - Field Services",
+    "board_id": 139,
+    "rules": [
+      "Company equals 'Fairfield Country Day School'",
+      "Company equals 'Orbit International Corp.'",
+      "Summary equals 'Thompson McMullan Weekly Onsite Ticket'"
+    ]
+  },
+  {
+    "board_name": "Client - Caduceus Health",
+    "board_id": 184,
+    "tasks": [
+      "hardware & software procurement",
+      "employee onboards/offboards",
+      "Athena VPN only",
+      "critical_apps (EPIC, Athena, UIPATH, RingCentral, VPN (Athena), FaXLogic, CrushFTP)"
+    ]
+  }
+]
+

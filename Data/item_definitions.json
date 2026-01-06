@@ -1,0 +1,267 @@
+[
+  {
+    "type": "Incident",
+    "subtype": "Hardware",
+    "item": "Desktop",
+    "description": "A user's desktop computer will not power on or is entirely unresponsive."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Hardware",
+    "item": "Laptop",
+    "description": "Device fails to boot, frequently crashes, or exhibits hardware issues like overheating or battery swelling."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Hardware",
+    "item": "Printer/MFP",
+    "description": "Printer or scanner has hardware/software errors like jams or connectivity issues."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Hardware",
+    "item": "Peripheral",
+    "description": "Accessories like a keyboard, webcam, or docking station are unresponsive, broken, or not detected."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Hardware",
+    "item": "Tablet or Mobile Device",
+    "description": "Mobile device is unresponsive, crashes, or won't enroll in mobile management."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Hardware",
+    "item": "Desktop UPS",
+    "description": "User-level UPS is beeping, in bypass, or nearing battery end-of-life."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Software",
+    "item": "Desktop Operating System",
+    "description": "Windows or macOS is crashing, in a boot loop, or impacted by driver or update issues."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Software",
+    "item": "Critical Application",
+    "description": "A business-critical app (e.g., EMR, POS) is inaccessible or malfunctioning."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Software",
+    "item": "Non-Critical Application",
+    "description": "A convenience or utility app (e.g., Slack, Notepad++) is misbehaving but non-urgent."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Network",
+    "item": "Wired Connectivity",
+    "description": "Ethernet jack or VLAN issue causing no connection at the user's desk."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Network",
+    "item": "Bandwidth/Latency",
+    "description": "Slow network performance, packet loss, or high jitter affecting cloud apps or VoIP."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Network",
+    "item": "Hardware",
+    "description": "Networking gear like a switch or firewall has failed hardware or is offline."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Network",
+    "item": "Wireless Connectivity",
+    "description": "Wi-Fi issues such as dropped connections, roaming failures, or poor signal."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Network",
+    "item": "ISP",
+    "description": "Internet connection is down, unstable, or performing below contractual speeds."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Systems",
+    "item": "Server Performance",
+    "description": "On-prem or cloud server is slow, crashing, or failing due to CPU, RAM, or disk I/O issues."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Systems",
+    "item": "Cloud / Virtualization Performance",
+    "description": "Cloud platforms like Azure or VMware are degraded due to resource constraints."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Systems",
+    "item": "Hardware",
+    "description": "Physical host has hardware faults like RAID failure, PSU errors, or thermal issues."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Systems",
+    "item": "Infrastructure UPS",
+    "description": "Rack-mounted UPS for critical systems is failing, alarming, or has expired batteries."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Systems",
+    "item": "Utilities",
+    "description": "Core systems like DNS, DHCP, or NTP are unavailable, leading to widespread issues."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Security",
+    "item": "Security Tools",
+    "description": "Endpoint protection tools (e.g., SentinelOne, Bitdefender) are disabled or blocking legitimate processes."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Security",
+    "item": "Scan Remediation",
+    "description": "Post-vulnerability scan task requiring patching or config changes to reduce risk."
+  },
+  {
+    "type": "Incident",
+    "subtype": "Security",
+    "item": "Physical",
+    "description": "Physical security devices like cameras, door locks, or DVRs are down or unreachable."
+  },
+  {
+    "type": "Service Request",
+    "subtype": "User Management",
+    "item": "New User",
+    "description": "Full onboarding of an employee — account creation, access provisioning, and device prep."
+  },
+  {
+    "type": "Service Request",
+    "subtype": "User Management",
+    "item": "Terminate User",
+    "description": "Secure offboarding — disable access, recover equipment, and archive data."
+  },
+  {
+    "type": "Service Request",
+    "subtype": "User Management",
+    "item": "Equipment Setup",
+    "description": "Setup or deployment of physical hardware like laptops, monitors, or docking stations."
+  },
+  {
+    "type": "Service Request",
+    "subtype": "User Management",
+    "item": "Password Reset",
+    "description": "Login issues/Reset a password or unlock an account while preserving group memberships."
+  },
+  {
+    "type": "Service Request",
+    "subtype": "User Management",
+    "item": "Access Change",
+    "description": "Add or remove access to systems, folders, groups, or applications."
+  },
+  {
+    "type": "Service Request",
+    "subtype": "User Management",
+    "item": "Software Installation",
+    "description": "Install a specific app outside the standard software catalog."
+  },
+  {
+    "type": "Service Request",
+    "subtype": "User Management",
+    "item": "Remote Access",
+    "description": "Set up or adjust VPN, RDP, or remote-help permissions for a user."
+  },
+  {
+    "type": "Service Request",
+    "subtype": "Maintenance Request",
+    "item": "Maintenance Visit",
+    "description": "Scheduled onsite visit for proactive equipment maintenance."
+  },
+  {
+    "type": "Service Request",
+    "subtype": "Maintenance Request",
+    "item": "Software Update",
+    "description": "Apply vendor updates or patches to LOB or productivity software."
+  },
+  {
+    "type": "Service Request",
+    "subtype": "Maintenance Request",
+    "item": "SSL Certificate",
+    "description": "Renew or install an SSL certificate on public-facing systems."
+  },
+  {
+    "type": "Service Request",
+    "subtype": "Maintenance Request",
+    "item": "Hardware/Firmware",
+    "description": "Update firmware on servers, switches, or other infrastructure components."
+  },
+  {
+    "type": "Recurring Problem",
+    "subtype": "Systems",
+    "item": "Cloud",
+    "description": "Persistent failures in cloud platforms, often with timing or regional patterns."
+  },
+  {
+    "type": "Recurring Problem",
+    "subtype": "Systems",
+    "item": "Application",
+    "description": "Business application crashes or errors recur, indicating deeper problems."
+  },
+  {
+    "type": "Recurring Problem",
+    "subtype": "Systems",
+    "item": "Local Server/Hardware",
+    "description": "Physical server instability over time (e.g., memory errors, disk failures)."
+  },
+  {
+    "type": "Recurring Problem",
+    "subtype": "Network",
+    "item": "Network Performance",
+    "description": "Ongoing slowness or connection drops tied to backups or peak usage."
+  },
+  {
+    "type": "Recurring Problem",
+    "subtype": "Network",
+    "item": "Network Hardware",
+    "description": "Recurring reboots or failures in network equipment, likely firmware related."
+  },
+  {
+    "type": "Recurring Problem",
+    "subtype": "User Hardware",
+    "item": "Device Performance",
+    "description": "Repeat endpoint issues such as slow performance after resume from sleep."
+  },
+  {
+    "type": "Root Cause Analysis",
+    "subtype": null,
+    "item": "Investigate and Report",
+    "description": "Documented analysis of the issue, including logs, impact, timeline, and a corrective action plan."
+  },
+  {
+    "type": "Continual Service Improvement",
+    "subtype": "Process Review",
+    "item": "Audit",
+    "description": "Perform internal or client-facing audits to assess compliance or service quality."
+  },
+  {
+    "type": "Continual Service Improvement",
+    "subtype": "Process Review",
+    "item": "Client Relations Meeting",
+    "description": "Strategic or routine business check-in meetings such as QBRs."
+  },
+  {
+    "type": "Continual Service Improvement",
+    "subtype": "Documentation",
+    "item": "Review/Update",
+    "description": "Clean up SOPs, KBs, architecture diagrams, or client documentation."
+  },
+  {
+    "type": "Continual Service Improvement",
+    "subtype": "Project QC",
+    "item": "Review",
+    "description": "Pre-closeout checklist and validation for project deliverables."
+  }
+]
+

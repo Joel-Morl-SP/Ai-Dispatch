@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "priority": "High",
+    "definition": "A significant service disruption with limited workaround options, affecting multiple users or a department, but less than 50% of total users at a location. Business functions are impaired but not halted.",
+    "examples": [
+      "Email or file sharing system issues for a team",
+      "Critical application error impacting key users",
+      "Degraded service performance across departments"
+    ],
+    "response_target": "60 minutes"
+  },
+  {
+    "id": 2,
+    "priority": "Escalation",
+    "definition": "A complete service failure or system outage causing critical impact to business operations, with no workaround available. Affects more than 50% of users or has organization-wide impact.",
+    "examples": [
+      "Core business application down for the majority of users",
+      "Network outage across multiple offices",
+      "Widespread security breach"
+    ],
+    "response_target": "30 minutes"
+  },
+  {
+    "id": 3,
+    "priority": "Low",
+    "definition": "Standard or routine service requests and non-urgent issues. No immediate business impact or workaround available. Typically includes changes or inquiries.",
+    "examples": [
+      "User account access request",
+      "Hardware move or setup",
+      "General how-to questions"
+    ],
+    "response_target": "24 hours"
+  },
+  {
+    "id": 4,
+    "priority": "Medium",
+    "definition": "An issue affecting a single user or a small group, typically involving a non-critical system or one with a reasonable workaround. No significant business impact.",
+    "examples": [
+      "Software installation issues",
+      "Printer not working for a user",
+      "VPN connectivity issues for an individual"
+    ],
+    "response_target": "24 hours"
+  }
+]
+

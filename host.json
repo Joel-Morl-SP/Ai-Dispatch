@@ -1,0 +1,22 @@
+{
+    "version": "2.0",
+    "logging": {
+        "logLevel": {
+            "default": "Information",
+            "System.Net.Http.HttpClient": "None",
+            "System.Net.Http.HttpClient.*": "None",
+            "System.Net.Http": "Warning",
+            "Azure.Core": "Warning",
+            "Azure.Core.HttpPipeline": "Warning",
+            "Azure.AI.OpenAI": "Warning",
+            "Microsoft.Extensions.Http": "Warning"
+        },
+        "applicationInsights": {
+            "samplingSettings": {
+                "isEnabled": true,
+                "excludedTypes": "Request"
+            },
+            "enableLiveMetricsFilters": true
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Ai_Dispatch": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7225",
+      "launchBrowser": false
+    }
+  }
+}

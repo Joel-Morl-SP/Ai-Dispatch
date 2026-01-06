@@ -1,0 +1,285 @@
+{
+  "classification_rules": [
+    {
+      "keyword": "A new scan schedule",
+      "type": "Vulnerability Scanning",
+      "subtype": "Report/Review",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "Bitdefender",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "High"
+    },
+    {
+      "keyword": "CrowdStrike",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "High"
+    },
+    {
+      "keyword": "CRU",
+      "type": "Security Alerts",
+      "subtype": "CW SIEM",
+      "priority": "Escalation"
+    },
+    {
+      "keyword": "Dark Web Password",
+      "type": "Security Alerts",
+      "subtype": "Dark Web",
+      "priority": "High"
+    },
+    {
+      "keyword": "Defender for Cloud Apps",
+      "type": "Security Alerts",
+      "subtype": "M365",
+      "priority": "High"
+    },
+    {
+      "keyword": "KB4",
+      "type": "KnowBe4",
+      "subtype": "User Assistance",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "KnowBe4",
+      "type": "KnowBe4",
+      "subtype": "User Assistance",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "KnowBe4 Phish Alert Deployment",
+      "type": "Troubleshoot/Repair",
+      "subtype": "KnowBe4",
+      "priority": "Low"
+    },
+    {
+      "keyword": "Malware",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "High"
+    },
+    {
+      "keyword": "Mandatory Training",
+      "type": "KnowBe4",
+      "subtype": "User Assistance",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "New Dark Web password",
+      "type": "Security Alerts",
+      "subtype": "Dark Web",
+      "priority": "High"
+    },
+    {
+      "keyword": "Perch Alerts",
+      "type": "Security Alerts",
+      "subtype": "CW SIEM",
+      "priority": "High"
+    },
+    {
+      "keyword": "Perch Log Shipper",
+      "type": "Troubleshoot/Repair",
+      "subtype": "CW SIEM",
+      "priority": "Low"
+    },
+    {
+      "keyword": "Perch Sensor",
+      "type": "Troubleshoot/Repair",
+      "subtype": "CW SIEM",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "Phish Alert",
+      "type": "Phishing",
+      "subtype": "",
+      "priority": "High"
+    },
+    {
+      "keyword": "Phishing",
+      "type": "Phishing",
+      "subtype": "",
+      "priority": "High"
+    },
+    {
+      "keyword": "Roaming Client Uninstall Summary",
+      "type": "DNS Filtering",
+      "subtype": "Agent Install/Uninstall",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "Security Awareness Training",
+      "type": "KnowBe4",
+      "subtype": "User Assistance",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "Sensor Offline",
+      "type": "Troubleshoot/Repair",
+      "subtype": "CW SIEM",
+      "priority": "High"
+    },
+    {
+      "keyword": "SentinelOne - Disconnect from network alert",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "Escalation"
+    },
+    {
+      "keyword": "SentinelOne - User started",
+      "type": "Troubleshoot/Repair",
+      "subtype": "EDR",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "SentinelOne (All other)",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "SentinelOne * (cli*)",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "High"
+    },
+    {
+      "keyword": "SentinelOne * Network quarantine performed",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "High"
+    },
+    {
+      "keyword": "SentinelOne Incident * (interactive*",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "High"
+    },
+    {
+      "keyword": "SentinelOne Incident *rollback",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "High"
+    },
+    {
+      "keyword": "SentinelOne - Agent Disabled",
+      "type": "Troubleshoot/Repair",
+      "subtype": "EDR",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "SentinelOne - Agent Enabled",
+      "type": "Troubleshoot/Repair",
+      "subtype": "EDR",
+      "priority": "Low"
+    },
+    {
+      "keyword": "SentinelOne - New active Threat",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "High"
+    },
+    {
+      "keyword": "SentinelOne - New Suspicious Threat",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "SentinelOne - Rollback",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "SentinelOne - User Enabled",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "Low"
+    },
+    {
+      "keyword": "Service Sentinel Agent",
+      "type": "Troubleshoot/Repair",
+      "subtype": "EDR",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "SIEM",
+      "type": "Security Alert",
+      "subtype": "CW SIEM",
+      "priority": "High"
+    },
+    {
+      "keyword": "SIEM: Sensor Offline",
+      "type": "Troubleshoot/Repair",
+      "subtype": "CW SIEM",
+      "priority": "Medium"
+    },
+    {
+      "keyword": "SIEM: Sensor Online",
+      "type": "Troubleshoot/Repair",
+      "subtype": "CW SIEM",
+      "priority": "Low"
+    },
+    {
+      "keyword": "Subscription Vulnerability",
+      "type": "Vulnerability Scanning",
+      "subtype": "Troubleshooting",
+      "priority": "Low"
+    },
+    {
+      "keyword": "ThreatLocker",
+      "type": "Threatlocker",
+      "subtype": "Software Installation",
+      "priority": "High"
+    },
+    {
+      "keyword": "Threatlocker Application",
+      "type": "ThreatLocker",
+      "subtype": "Software Installation",
+      "priority": "High"
+    },
+    {
+      "keyword": "Threatlocker Elevation",
+      "type": "ThreatLocker",
+      "subtype": "Software Elevation",
+      "priority": "High"
+    },
+    {
+      "keyword": "Virus",
+      "type": "Security Alerts",
+      "subtype": "EDR",
+      "priority": "High"
+    },
+    {
+      "keyword": "Website Block",
+      "type": "DNS Filtering",
+      "subtype": "Block Page",
+      "priority": "High"
+    },
+    {
+      "keyword": "Windows:",
+      "type": "Security Alerts",
+      "subtype": "CW SIEM",
+      "priority": "Escalation"
+    },
+    {
+      "keyword": "Your report is ready",
+      "type": "Vulnerability Scanning",
+      "subtype": "Report/Review",
+      "priority": "Medium"
+    }
+  ],
+  "special_rules": {
+    "perch_alerts": {
+      "description": "If an alert is for Perch, keep the ticket type to 'Security Alerts' and subtype is 'CW SIEM'",
+      "indicators": [
+        "The summary Description would have the word 'SIEM' at the start",
+        "Applications/Sources with usually with the symbol [ ]",
+        "Summary description that has 'has been triggered for **name of the company**'"
+      ]
+    }
+  }
+}
+
