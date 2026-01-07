@@ -6,7 +6,7 @@ using Ai_Dispatch.Services;
 
 namespace Ai_Dispatch.Services.Classification;
 
-public class BoardRoutingClassifier
+public class BoardRoutingClassifier : IClassificationStep
 {
     private readonly ILogger _logger;
     private readonly AzureOpenAIService _openAIService;
@@ -25,7 +25,7 @@ public class BoardRoutingClassifier
         _reasoningModel = reasoningModel;
     }
 
-    public async Task ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
     {
         _logger.LogInformation("Starting Board Routing classification - TicketId: {TicketId}, CompanyId: {CompanyId}, CompanyName: {CompanyName}", 
             context.TicketRequest.TicketId, context.TicketRequest.CompanyId, context.TicketRequest.CompanyName ?? "Unknown");
@@ -68,5 +68,7 @@ public class BoardRoutingClassifier
 
         await _loggingService.LogDecisionAsync("Board Routing", context.TicketRequest.TicketId, 
             context.TicketRequest.CompanyName ?? "Unknown", boardLogData);
+        
+        return null;
     }
 }

@@ -68,27 +68,29 @@ public class DispatchClassificationFunction
             context.IsNoCompany = ticketRequest.CompanyId == ConnectWiseConstants.NoCompanyId;
             context.IsNoCompanyBranch = context.IsNoCompany;
 
+            var classificationSteps = new List<IClassificationStep>();
+            
             if (context.IsNoCompany)
             {
-                var noCompanySpamClassifier = new NoCompanySpamClassifier(_logger, _openAIService, _loggingService, _connectWiseService, _baseModel);
-                var noCompanyResponse = await noCompanySpamClassifier.ExecuteAsync(context);
-                if (noCompanyResponse != null)
-                {
-                    return noCompanyResponse;
-                }
+                classificationSteps.Add(new NoCompanySpamClassifier(_logger, _openAIService, _loggingService, _connectWiseService, _baseModel));
             }
             else
             {
-                var companyTicketTypeClassifier = new CompanyTicketTypeClassifier(_logger, _openAIService, _loggingService, _connectWiseService, _baseModel);
-                var companyResponse = await companyTicketTypeClassifier.ExecuteAsync(context);
-                if (companyResponse != null)
-                {
-                    return companyResponse;
-                }
+                classificationSteps.Add(new CompanyTicketTypeClassifier(_logger, _openAIService, _loggingService, _connectWiseService, _baseModel));
             }
 
-            var boardRoutingClassifier = new BoardRoutingClassifier(_logger, _openAIService, _loggingService, _reasoningModel);
-            await boardRoutingClassifier.ExecuteAsync(context);
+            classificationSteps.Add(new BoardRoutingClassifier(_logger, _openAIService, _loggingService, _reasoningModel));
+            classificationSteps.Add(new TSIClassifier(_logger, _openAIService, _loggingService, _reasoningModel));
+            classificationSteps.Add(new SummaryGenerator(_logger, _openAIService, _loggingService, _baseModel));
+
+            foreach (var step in classificationSteps)
+            {
+                var response = await step.ExecuteAsync(context);
+                if (response != null)
+                {
+                    return response;
+                }
+            }
 
             await CreateClassificationActivitiesAsync(context);
 
@@ -101,12 +103,6 @@ public class DispatchClassificationFunction
             {
                 return await HandleNonServiceBoardAsync(context);
             }
-
-            var tsiClassifier = new TSIClassifier(_logger, _openAIService, _loggingService, _reasoningModel);
-            await tsiClassifier.ExecuteAsync(context);
-
-            var summaryGenerator = new SummaryGenerator(_logger, _openAIService, _loggingService, _baseModel);
-            await summaryGenerator.ExecuteAsync(context);
 
             await LookupContactAsync(context);
 

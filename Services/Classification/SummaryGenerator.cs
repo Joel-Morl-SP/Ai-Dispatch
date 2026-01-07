@@ -1,10 +1,11 @@
 using Microsoft.Extensions.Logging;
 using Ai_Dispatch.Models;
+using Ai_Dispatch.Models.Responses;
 using Ai_Dispatch.Services;
 
 namespace Ai_Dispatch.Services.Classification;
 
-public class SummaryGenerator
+public class SummaryGenerator : IClassificationStep
 {
     private readonly ILogger _logger;
     private readonly AzureOpenAIService _openAIService;
@@ -23,7 +24,7 @@ public class SummaryGenerator
         _baseModel = baseModel;
     }
 
-    public async Task ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
     {
         _logger.LogInformation("Starting Summary generation - TicketId: {TicketId}", context.TicketRequest.TicketId);
         
@@ -55,5 +56,7 @@ public class SummaryGenerator
 
         await _loggingService.LogDecisionAsync("Summary", context.TicketRequest.TicketId, 
             context.TicketRequest.CompanyName ?? "Unknown", summaryLogData);
+        
+        return null;
     }
 }

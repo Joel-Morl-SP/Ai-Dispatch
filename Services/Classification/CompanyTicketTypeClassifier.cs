@@ -9,7 +9,7 @@ using Ai_Dispatch.Services;
 
 namespace Ai_Dispatch.Services.Classification;
 
-public class CompanyTicketTypeClassifier
+public class CompanyTicketTypeClassifier : IClassificationStep
 {
     private readonly ILogger _logger;
     private readonly AzureOpenAIService _openAIService;
@@ -31,7 +31,7 @@ public class CompanyTicketTypeClassifier
         _baseModel = baseModel;
     }
 
-    public async Task<HttpResponseData?> ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
     {
         _logger.LogInformation("Company detected (CompanyId: {CompanyId}, CompanyName: {CompanyName}) - Starting Ticket Type classification - TicketId: {TicketId}", 
             context.TicketRequest.CompanyId, context.TicketRequest.CompanyName ?? "Unknown", context.TicketRequest.TicketId);

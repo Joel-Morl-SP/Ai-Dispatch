@@ -9,7 +9,7 @@ using Ai_Dispatch.Services;
 
 namespace Ai_Dispatch.Services.Classification;
 
-public class NoCompanySpamClassifier
+public class NoCompanySpamClassifier : IClassificationStep
 {
     private readonly ILogger _logger;
     private readonly AzureOpenAIService _openAIService;
@@ -31,7 +31,7 @@ public class NoCompanySpamClassifier
         _baseModel = baseModel;
     }
 
-    public async Task<HttpResponseData?> ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
     {
         _logger.LogInformation("No Company detected (CompanyId: {CompanyId}) - Starting SPAM classification - TicketId: {TicketId}", 
             context.TicketRequest.CompanyId, context.TicketRequest.TicketId);

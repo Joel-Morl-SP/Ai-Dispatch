@@ -1,10 +1,11 @@
 using Microsoft.Extensions.Logging;
 using Ai_Dispatch.Models;
+using Ai_Dispatch.Models.Responses;
 using Ai_Dispatch.Services;
 
 namespace Ai_Dispatch.Services.Classification;
 
-public class TSIClassifier
+public class TSIClassifier : IClassificationStep
 {
     private readonly ILogger _logger;
     private readonly AzureOpenAIService _openAIService;
@@ -23,7 +24,7 @@ public class TSIClassifier
         _reasoningModel = reasoningModel;
     }
 
-    public async Task ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
     {
         _logger.LogInformation("Starting TSI Classification - TicketId: {TicketId}, BoardId: {BoardId}, BoardName: {BoardName}", 
             context.TicketRequest.TicketId, context.BoardResponse!.BoardId, context.BoardResponse.BoardName ?? "Unknown");
@@ -59,5 +60,7 @@ public class TSIClassifier
 
         await _loggingService.LogDecisionAsync("TSI Classification", context.TicketRequest.TicketId, 
             context.TicketRequest.CompanyName ?? "Unknown", tsiLogData);
+        
+        return null;
     }
 }
