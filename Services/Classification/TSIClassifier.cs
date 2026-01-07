@@ -1,3 +1,4 @@
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Ai_Dispatch.Models;
 using Ai_Dispatch.Models.Responses;

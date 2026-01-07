@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Ai_Dispatch.Services;
+using Ai_Dispatch.Services.Classification;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -80,5 +81,15 @@ builder.Services.AddSingleton<ProposedNoteService>(provider =>
     var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
     return new ProposedNoteService(config, logger, httpClientFactory);
 });
+
+builder.Services.AddScoped<IRequestValidator, RequestValidator>();
+builder.Services.AddScoped<ITicketRequestLogger, TicketRequestLogger>();
+builder.Services.AddScoped<IClassificationActivityCreator, ClassificationActivityCreator>();
+builder.Services.AddScoped<IBoardConfidenceHandler, BoardConfidenceHandler>();
+builder.Services.AddScoped<IContactLookup, ContactLookup>();
+builder.Services.AddScoped<ITicketUpdateBuilder, TicketUpdateBuilder>();
+builder.Services.AddScoped<ITicketUpdater, TicketUpdater>();
+builder.Services.AddScoped<IProposedNoteProcessor, ProposedNoteProcessor>();
+builder.Services.AddScoped<IResponseBuilder, ResponseBuilder>();
 
 builder.Build().Run();
