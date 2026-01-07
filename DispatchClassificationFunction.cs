@@ -8,6 +8,7 @@ using Ai_Dispatch.Models;
 using Ai_Dispatch.Models.Requests;
 using Ai_Dispatch.Models.Responses;
 using Ai_Dispatch.Services;
+using Ai_Dispatch.Services.Classification;
 
 namespace Ai_Dispatch;
 
@@ -69,7 +70,8 @@ public class DispatchClassificationFunction
 
             if (context.IsNoCompany)
             {
-                var noCompanyResponse = await ProcessNoCompanySpamClassificationAsync(context);
+                var noCompanySpamClassifier = new NoCompanySpamClassifier(_logger, _openAIService, _loggingService, _connectWiseService, _baseModel);
+                var noCompanyResponse = await noCompanySpamClassifier.ExecuteAsync(context);
                 if (noCompanyResponse != null)
                 {
                     return noCompanyResponse;
@@ -77,14 +79,16 @@ public class DispatchClassificationFunction
             }
             else
             {
-                var companyResponse = await ProcessCompanyTicketTypeClassificationAsync(context);
+                var companyTicketTypeClassifier = new CompanyTicketTypeClassifier(_logger, _openAIService, _loggingService, _connectWiseService, _baseModel);
+                var companyResponse = await companyTicketTypeClassifier.ExecuteAsync(context);
                 if (companyResponse != null)
                 {
                     return companyResponse;
                 }
             }
 
-            await ProcessBoardRoutingClassificationAsync(context);
+            var boardRoutingClassifier = new BoardRoutingClassifier(_logger, _openAIService, _loggingService, _reasoningModel);
+            await boardRoutingClassifier.ExecuteAsync(context);
 
             await CreateClassificationActivitiesAsync(context);
 
@@ -98,9 +102,11 @@ public class DispatchClassificationFunction
                 return await HandleNonServiceBoardAsync(context);
             }
 
-            await ProcessTSIClassificationAsync(context);
+            var tsiClassifier = new TSIClassifier(_logger, _openAIService, _loggingService, _reasoningModel);
+            await tsiClassifier.ExecuteAsync(context);
 
-            await ProcessSummaryGenerationAsync(context);
+            var summaryGenerator = new SummaryGenerator(_logger, _openAIService, _loggingService, _baseModel);
+            await summaryGenerator.ExecuteAsync(context);
 
             await LookupContactAsync(context);
 
@@ -168,230 +174,6 @@ public class DispatchClassificationFunction
             context.TicketRequest.Notes?.Count ?? 0);
     }
 
-    private async Task<HttpResponseData?> ProcessNoCompanySpamClassificationAsync(
-        TicketClassificationContext context)
-    {
-
-        _logger.LogInformation("No Company detected (CompanyId: {CompanyId}) - Starting SPAM classification - TicketId: {TicketId}", 
-            context.TicketRequest.CompanyId, context.TicketRequest.TicketId);
-        
-        var spamPrompt = SpamPromptService.GetPrompt();
-        var spamInput = InputBuilderService.BuildSpamTicketClassificationInput(context.TicketRequest);
-        
-        _logger.LogInformation("Calling OpenAI for SPAM classification - TicketId: {TicketId}, Model: {Model}", 
-            context.TicketRequest.TicketId, _baseModel);
-        
-        var (result, tokenUsage, model) = await _openAIService.GetCompletionAsync<SpamClassificationResponse>(
-            spamPrompt, spamInput, _baseModel, 0f, 1500);
-
-        context.SpamResponse = result;
-        context.SpamConfidence = result.ConfidenceScore;
-        context.InitialIntent = result.Intent;
-        
-        _logger.LogInformation("SPAM classification completed - TicketId: {TicketId}, Decision: {Decision}, Confidence: {Confidence}, Intent: {Intent}, Model: {Model}, Tokens: {TotalTokens}", 
-            context.TicketRequest.TicketId, result.Decision, context.SpamConfidence, context.InitialIntent ?? "None", model, tokenUsage.TotalTokens);
-
-        var spamLogData = new Dictionary<string, object?>
-        {
-            { nameof(DecisionLogEntity.Intent), context.InitialIntent },
-            { nameof(DecisionLogEntity.Reason), result.Reason },
-            { nameof(DecisionLogEntity.ConfidenceScore), result.ConfidenceScore },
-            { nameof(DecisionLogEntity.Model), model },
-            { nameof(DecisionLogEntity.PromptTokens), tokenUsage.PromptTokens },
-            { nameof(DecisionLogEntity.CompletionTokens), tokenUsage.CompletionTokens },
-            { nameof(DecisionLogEntity.TotalTokens), tokenUsage.TotalTokens },
-            { nameof(DecisionLogEntity.Classification), result.Decision == "Spam" ? "SPAM" : "Ticket" }
-        };
-
-        await _loggingService.LogDecisionAsync("Ticket Type", context.TicketRequest.TicketId, 
-            context.TicketRequest.CompanyName ?? "No Company", spamLogData);
-
-        if (result.Decision == "Ticket")
-        {
-            _logger.LogInformation("SPAM classification - Decision: {Decision}, Confidence: {Confidence}, Intent: {Intent} - TicketId: {TicketId}", 
-                result.Decision, context.SpamConfidence, context.InitialIntent ?? "None", context.TicketRequest.TicketId);
-            
-            var note = NoteBuilderService.BuildNoCompanyNote();
-            var updateRequest = new TicketUpdateRequest
-            {
-                Status = new ActivityReference { Id = ConnectWiseConstants.AdminReviewStatusId }
-            };
-
-            await _connectWiseService.UpdateTicketAsync(context.TicketRequest.TicketId, updateRequest);
-            await _connectWiseService.AddNoteToTicketAsync(context.TicketRequest.TicketId, note);
-            
-            _logger.LogInformation("NoCompany ticket processed - TicketId: {TicketId}, Classification: {Decision}, Status: Triage Review, Note: Added, Actions: Successful", 
-                context.TicketRequest.TicketId, result.Decision);
-
-            var response = context.Request.CreateResponse(System.Net.HttpStatusCode.OK);
-            response.Headers.Add("Content-Type", "application/json");
-            var responseBody = JsonSerializer.Serialize(new { message = "Ticket moved to Triage Review - No Company" });
-            await response.WriteStringAsync(responseBody);
-            return response;
-        }
-
-        if (result.Decision == "Spam" && context.SpamConfidence == 95)
-        {
-            _logger.LogInformation("SPAM classification - Decision: {Decision}, Confidence: {Confidence}, Intent: {Intent} - TicketId: {TicketId}", 
-                result.Decision, context.SpamConfidence, context.InitialIntent ?? "None", context.TicketRequest.TicketId);
-            
-            var note = NoteBuilderService.BuildPossibleSpamNote(context.SpamResponse, context.InitialIntent);
-            var updateRequest = new TicketUpdateRequest
-            {
-                Status = new ActivityReference { Id = ConnectWiseConstants.AdminReviewStatusId }
-            };
-
-            await _connectWiseService.UpdateTicketAsync(context.TicketRequest.TicketId, updateRequest);
-            await _connectWiseService.AddNoteToTicketAsync(context.TicketRequest.TicketId, note);
-            await _connectWiseService.CreateActivitiesForClassificationAsync(context.TicketRequest.TicketId, context.SpamResponse, null, context.SpamConfidence, 0);
-            
-            _logger.LogInformation("NoCompany spam ticket processed - TicketId: {TicketId}, Classification: {Decision} (Confidence: {Confidence}), Status: Triage Review, Note: Added, Activity: Possible SPAM Classification, Actions: Successful", 
-                context.TicketRequest.TicketId, result.Decision, context.SpamConfidence);
-
-            var response = context.Request.CreateResponse(System.Net.HttpStatusCode.OK);
-            response.Headers.Add("Content-Type", "application/json");
-            var responseBody = JsonSerializer.Serialize(new { message = "Ticket moved to Triage Review - Possible SPAM" });
-            await response.WriteStringAsync(responseBody);
-            return response;
-        }
-
-        if (result.Decision == "Spam" && context.SpamConfidence == 100)
-        {
-            _logger.LogInformation("SPAM classification - Decision: {Decision}, Confidence: {Confidence}, Intent: {Intent} - TicketId: {TicketId}", 
-                result.Decision, context.SpamConfidence, context.InitialIntent ?? "None", context.TicketRequest.TicketId);
-            
-            var note = NoteBuilderService.BuildSpam100Note(context.SpamResponse, context.InitialIntent);
-            var updateRequest = new TicketUpdateRequest
-            {
-                Type = new ActivityTypeReference { Id = ConnectWiseConstants.ContinualServiceImprovementTypeId },
-                Status = new ActivityReference { Id = ConnectWiseConstants.ClosingStatusId }
-            };
-
-            await _connectWiseService.UpdateTicketAsync(context.TicketRequest.TicketId, updateRequest);
-            await _connectWiseService.AddNoteToTicketAsync(context.TicketRequest.TicketId, note);
-            await _connectWiseService.CreateActivitiesForClassificationAsync(context.TicketRequest.TicketId, context.SpamResponse, null, context.SpamConfidence, 0);
-            
-            _logger.LogInformation("NoCompany spam ticket closed - TicketId: {TicketId}, Classification: {Decision} (Confidence: {Confidence}), Status: Closing, Type: Continual Service Improvement, Note: Added, Activity: SPAM Classification 100%, Actions: Successful", 
-                context.TicketRequest.TicketId, result.Decision, context.SpamConfidence);
-
-            var response = context.Request.CreateResponse(System.Net.HttpStatusCode.OK);
-            response.Headers.Add("Content-Type", "application/json");
-            var responseBody = JsonSerializer.Serialize(new { message = "Ticket closed - SPAM" });
-            await response.WriteStringAsync(responseBody);
-            return response;
-        }
-
-        return null;
-    }
-
-    private async Task<HttpResponseData?> ProcessCompanyTicketTypeClassificationAsync(
-        TicketClassificationContext context)
-    {
-        _logger.LogInformation("Company detected (CompanyId: {CompanyId}, CompanyName: {CompanyName}) - Starting Ticket Type classification - TicketId: {TicketId}", 
-            context.TicketRequest.CompanyId, context.TicketRequest.CompanyName ?? "Unknown", context.TicketRequest.TicketId);
-        
-        var ticketPrompt = TicketClassificationPromptService.GetPrompt();
-        var ticketInput = InputBuilderService.BuildSpamTicketClassificationInput(context.TicketRequest);
-        
-        _logger.LogInformation("Calling OpenAI for Ticket Type classification - TicketId: {TicketId}, Model: {Model}", 
-            context.TicketRequest.TicketId, _baseModel);
-        
-        var (result, tokenUsage, model) = await _openAIService.GetCompletionAsync<TicketClassificationResponse>(
-            ticketPrompt, ticketInput, _baseModel, 0f, 1500);
-
-        context.TicketResponse = result;
-        context.InitialIntent = result.Intent;
-        
-        _logger.LogInformation("Ticket Type classification completed - TicketId: {TicketId}, Decision: {Decision}, Confidence: {Confidence}, Intent: {Intent}, Model: {Model}, Tokens: {TotalTokens}", 
-            context.TicketRequest.TicketId, result.Decision, result.ConfidenceScore, context.InitialIntent ?? "None", model, tokenUsage.TotalTokens);
-
-        var ticketLogData = new Dictionary<string, object?>
-        {
-            { nameof(DecisionLogEntity.Intent), context.InitialIntent },
-            { nameof(DecisionLogEntity.Reason), result.Reason },
-            { nameof(DecisionLogEntity.ConfidenceScore), result.ConfidenceScore },
-            { nameof(DecisionLogEntity.Model), model },
-            { nameof(DecisionLogEntity.PromptTokens), tokenUsage.PromptTokens },
-            { nameof(DecisionLogEntity.CompletionTokens), tokenUsage.CompletionTokens },
-            { nameof(DecisionLogEntity.TotalTokens), tokenUsage.TotalTokens },
-            { nameof(DecisionLogEntity.Classification), result.Decision }
-        };
-
-        await _loggingService.LogDecisionAsync("Ticket Type", context.TicketRequest.TicketId, 
-            context.TicketRequest.CompanyName ?? "Unknown", ticketLogData);
-
-        if (result.Decision == "Info-Alert")
-        {
-            _logger.LogInformation("Ticket Type classification decision: Info-Alert - Moving to Triage Review - TicketId: {TicketId}, Confidence: {Confidence}", 
-                context.TicketRequest.TicketId, result.ConfidenceScore);
-            
-            var note = NoteBuilderService.BuildInfoAlertNote(context.TicketResponse, context.InitialIntent);
-            var updateRequest = new TicketUpdateRequest
-            {
-                Status = new ActivityReference { Id = ConnectWiseConstants.AdminReviewStatusId }
-            };
-
-            await _connectWiseService.UpdateTicketAsync(context.TicketRequest.TicketId, updateRequest);
-            await _connectWiseService.AddNoteToTicketAsync(context.TicketRequest.TicketId, note);
-            
-            _logger.LogInformation("Info-Alert ticket processed - TicketId: {TicketId}, Status: Triage Review, Actions: Successful", 
-                context.TicketRequest.TicketId);
-
-            var response = context.Request.CreateResponse(System.Net.HttpStatusCode.OK);
-            response.Headers.Add("Content-Type", "application/json");
-            var responseBody = JsonSerializer.Serialize(new { message = "Ticket moved to Triage Review - Info-Alert" });
-            await response.WriteStringAsync(responseBody);
-            return response;
-        }
-
-        return null;
-    }
-
-    private async Task ProcessBoardRoutingClassificationAsync(
-        TicketClassificationContext context)
-    {
-        _logger.LogInformation("Starting Board Routing classification - TicketId: {TicketId}, CompanyId: {CompanyId}, CompanyName: {CompanyName}", 
-            context.TicketRequest.TicketId, context.TicketRequest.CompanyId, context.TicketRequest.CompanyName ?? "Unknown");
-        
-        var boardPrompt = await BoardRoutingPromptService.GetPrompt(
-            context.TicketRequest.CompanyId,
-            ConnectWiseConstants.L1BoardId,
-            ConnectWiseConstants.L2BoardId,
-            ConnectWiseConstants.L3BoardId,
-            ConnectWiseConstants.CaduceusBoardId,
-            ConnectWiseConstants.SecurityBoardId,
-            ConnectWiseConstants.NOCBoardId);
-
-        var boardInput = InputBuilderService.BuildBoardRoutingInput(context.TicketRequest, context.InitialIntent);
-        
-        _logger.LogInformation("Calling OpenAI for Board Routing - TicketId: {TicketId}, Intent: {Intent}, Model: {Model}", 
-            context.TicketRequest.TicketId, context.InitialIntent ?? "None", _reasoningModel);
-        
-        var (boardResult, boardTokenUsage, boardModel) = await _openAIService.GetCompletionAsync<BoardRoutingResponse>(
-            boardPrompt, boardInput, _reasoningModel, 0f, 3000);
-
-        context.BoardResponse = boardResult;
-        context.BoardConfidence = boardResult.ConfidenceScore;
-        
-        _logger.LogInformation("Board Routing classification completed - TicketId: {TicketId}, BoardId: {BoardId}, BoardName: {BoardName}, Confidence: {Confidence}, Model: {Model}, Tokens: {TotalTokens}", 
-            context.TicketRequest.TicketId, boardResult.BoardId, boardResult.BoardName ?? "Unknown", context.BoardConfidence, boardModel, boardTokenUsage.TotalTokens);
-
-        var boardLogData = new Dictionary<string, object?>
-        {
-            { nameof(DecisionLogEntity.Intent), context.InitialIntent },
-            { nameof(DecisionLogEntity.Reason), boardResult.Reason },
-            { nameof(DecisionLogEntity.ConfidenceScore), boardResult.ConfidenceScore },
-            { nameof(DecisionLogEntity.BoardId), boardResult.BoardId },
-            { nameof(DecisionLogEntity.BoardName), boardResult.BoardName },
-            { nameof(DecisionLogEntity.Model), boardModel },
-            { nameof(DecisionLogEntity.PromptTokens), boardTokenUsage.PromptTokens },
-            { nameof(DecisionLogEntity.CompletionTokens), boardTokenUsage.CompletionTokens },
-            { nameof(DecisionLogEntity.TotalTokens), boardTokenUsage.TotalTokens }
-        };
-
-        await _loggingService.LogDecisionAsync("Board Routing", context.TicketRequest.TicketId, 
-            context.TicketRequest.CompanyName ?? "Unknown", boardLogData);
-    }
 
     private async Task CreateClassificationActivitiesAsync(
         TicketClassificationContext context)
@@ -453,79 +235,6 @@ public class DispatchClassificationFunction
         return response;
     }
 
-    private async Task ProcessTSIClassificationAsync(
-        TicketClassificationContext context)
-    {
-        _logger.LogInformation("Starting TSI Classification - TicketId: {TicketId}, BoardId: {BoardId}, BoardName: {BoardName}", 
-            context.TicketRequest.TicketId, context.BoardResponse!.BoardId, context.BoardResponse.BoardName ?? "Unknown");
-        
-        var tsiPrompt = await TSIPromptService.GetPrompt(context.BoardResponse.BoardId, context.BoardResponse.BoardName);
-        var tsiInput = InputBuilderService.BuildTSIInput(context.TicketRequest, context.InitialIntent);
-        
-        _logger.LogInformation("Calling OpenAI for TSI Classification - TicketId: {TicketId}, Intent: {Intent}, Model: {Model}", 
-            context.TicketRequest.TicketId, context.InitialIntent ?? "None", _reasoningModel);
-        
-        var (tsiResult, tsiTokenUsage, tsiModel) = await _openAIService.GetCompletionAsync<TSIClassificationResponse>(
-            tsiPrompt, tsiInput, _reasoningModel, 0f, 15000);
-        
-        context.TsiResponse = tsiResult;
-        
-        _logger.LogInformation("TSI Classification completed - TicketId: {TicketId}, Type: {Type}, Subtype: {Subtype}, Item: {Item}, Priority: {Priority}, Confidence: {Confidence}, Model: {Model}, Tokens: {TotalTokens}", 
-            context.TicketRequest.TicketId, tsiResult.Type?.Name ?? "None", tsiResult.Subtype?.Name ?? "None", tsiResult.Item?.Name ?? "None", 
-            tsiResult.Priority?.Name ?? "None", tsiResult.ConfidenceScore, tsiModel, tsiTokenUsage.TotalTokens);
-
-        var tsiLogData = new Dictionary<string, object?>();
-        if (context.InitialIntent != null) tsiLogData[nameof(DecisionLogEntity.Intent)] = context.InitialIntent;
-        if (tsiResult.Reason.ValueKind != System.Text.Json.JsonValueKind.Undefined) 
-            tsiLogData[nameof(DecisionLogEntity.Reason)] = tsiResult.Reason.ToString();
-        tsiLogData[nameof(DecisionLogEntity.ConfidenceScore)] = tsiResult.ConfidenceScore;
-        if (tsiResult.Type != null) tsiLogData[nameof(DecisionLogEntity.Type)] = tsiResult.Type.Name;
-        if (tsiResult.Subtype != null) tsiLogData[nameof(DecisionLogEntity.Subtype)] = tsiResult.Subtype.Name;
-        if (tsiResult.Item != null) tsiLogData[nameof(DecisionLogEntity.Item)] = tsiResult.Item.Name;
-        if (tsiResult.Priority != null) tsiLogData[nameof(DecisionLogEntity.Priority)] = tsiResult.Priority.Name;
-        tsiLogData[nameof(DecisionLogEntity.Model)] = tsiModel;
-        tsiLogData[nameof(DecisionLogEntity.PromptTokens)] = tsiTokenUsage.PromptTokens;
-        tsiLogData[nameof(DecisionLogEntity.CompletionTokens)] = tsiTokenUsage.CompletionTokens;
-        tsiLogData[nameof(DecisionLogEntity.TotalTokens)] = tsiTokenUsage.TotalTokens;
-
-        await _loggingService.LogDecisionAsync("TSI Classification", context.TicketRequest.TicketId, 
-            context.TicketRequest.CompanyName ?? "Unknown", tsiLogData);
-    }
-
-    private async Task ProcessSummaryGenerationAsync(
-        TicketClassificationContext context)
-    {
-        _logger.LogInformation("Starting Summary generation - TicketId: {TicketId}", context.TicketRequest.TicketId);
-        
-        var summaryPrompt = SummaryPromptService.GetPrompt();
-        var summaryInput = InputBuilderService.BuildSummaryInput(context.TicketRequest, context.InitialIntent);
-        
-        _logger.LogInformation("Calling OpenAI for Summary generation - TicketId: {TicketId}, Intent: {Intent}, Model: {Model}", 
-            context.TicketRequest.TicketId, context.InitialIntent ?? "None", _baseModel);
-        
-        var (summaryResult, summaryTokenUsage, summaryModel) = await _openAIService.GetCompletionAsync<SummaryResponse>(
-            summaryPrompt, summaryInput, _baseModel, 0f, 500);
-        
-        context.SummaryResponse = summaryResult;
-        
-        _logger.LogInformation("Summary generation completed - TicketId: {TicketId}, SubmittedFor: {SubmittedFor}, Model: {Model}, Tokens: {TotalTokens}", 
-            context.TicketRequest.TicketId, summaryResult.SubmittedFor ?? "None", summaryModel, summaryTokenUsage.TotalTokens);
-
-        var summaryLogData = new Dictionary<string, object?>
-        {
-            { nameof(DecisionLogEntity.Intent), context.InitialIntent },
-            { nameof(DecisionLogEntity.Reason), summaryResult.Reason },
-            { nameof(DecisionLogEntity.ConfidenceScore), summaryResult.ConfidenceScore },
-            { nameof(DecisionLogEntity.Summary), summaryResult.NewSummary },
-            { nameof(DecisionLogEntity.Model), summaryModel },
-            { nameof(DecisionLogEntity.PromptTokens), summaryTokenUsage.PromptTokens },
-            { nameof(DecisionLogEntity.CompletionTokens), summaryTokenUsage.CompletionTokens },
-            { nameof(DecisionLogEntity.TotalTokens), summaryTokenUsage.TotalTokens }
-        };
-
-        await _loggingService.LogDecisionAsync("Summary", context.TicketRequest.TicketId, 
-            context.TicketRequest.CompanyName ?? "Unknown", summaryLogData);
-    }
 
     private async Task LookupContactAsync(TicketClassificationContext context)
     {
@@ -703,7 +412,7 @@ public class DispatchClassificationFunction
         return errorResponse;
     }
 
-    private class TicketClassificationContext
+    internal class TicketClassificationContext
     {
         public TicketRequest TicketRequest { get; set; } = null!;
         public HttpRequestData Request { get; set; } = null!;
