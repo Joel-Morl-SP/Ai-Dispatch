@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using Ai_Dispatch.Models;
 using Ai_Dispatch.Services;
 
 namespace Ai_Dispatch.Services.Classification;
@@ -16,7 +17,7 @@ public class ResponseBuilder : IResponseBuilder
         _teamsAlertService = teamsAlertService;
     }
 
-    public async Task<HttpResponseData> BuildSuccessResponseAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    public async Task<HttpResponseData> BuildSuccessResponseAsync(TicketClassificationContext context)
     {
         var successResponse = context.Request.CreateResponse(System.Net.HttpStatusCode.OK);
         successResponse.Headers.Add("Content-Type", "application/json");
@@ -41,7 +42,7 @@ public class ResponseBuilder : IResponseBuilder
         return successResponse;
     }
 
-    public async Task<HttpResponseData> HandleErrorAsync(DispatchClassificationFunction.TicketClassificationContext context, Exception ex)
+    public async Task<HttpResponseData> HandleErrorAsync(TicketClassificationContext context, Exception ex)
     {
         _logger.LogError(ex, "Error processing ticket classification - ExceptionType: {ExceptionType}, Message: {Message}, StackTrace: {StackTrace}", 
             ex.GetType().Name, ex.Message, ex.StackTrace);
@@ -50,8 +51,7 @@ public class ResponseBuilder : IResponseBuilder
             ? "Change Me SPAM Classification Failure" 
             : "Dispatch Triage Failure";
         
-        // TODO: Uncomment after testing
-        // await _teamsAlertService.SendAlertAsync(failureMessage);
+        await _teamsAlertService.SendAlertAsync(failureMessage);
         
         var errorResponse = context.Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
         errorResponse.Headers.Add("Content-Type", "application/json");

@@ -1,4 +1,5 @@
 using Microsoft.Azure.Functions.Worker.Http;
+using Ai_Dispatch.Models;
 
 namespace Ai_Dispatch.Services.Classification;
 
@@ -10,5 +11,5 @@ namespace Ai_Dispatch.Services.Classification;
 /// </summary>
 internal interface IClassificationStep
 {
-    Task<HttpResponseData?> ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context);
+    Task<HttpResponseData?> ExecuteAsync(TicketClassificationContext context);
 }

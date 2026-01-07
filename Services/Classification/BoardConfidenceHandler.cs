@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Ai_Dispatch.Constants;
+using Ai_Dispatch.Models;
 using Ai_Dispatch.Models.Requests;
 using Ai_Dispatch.Services;
 
@@ -18,7 +19,7 @@ public class BoardConfidenceHandler : IBoardConfidenceHandler
         _connectWiseService = connectWiseService;
     }
 
-    public async Task<HttpResponseData> HandleLowBoardConfidenceAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    public async Task<HttpResponseData> HandleLowBoardConfidenceAsync(TicketClassificationContext context)
     {
         _logger.LogInformation("Board confidence below threshold ({Confidence} < 90) - Moving to Triage Review - TicketId: {TicketId}, BoardId: {BoardId}, BoardName: {BoardName}", 
             context.BoardResponse!.ConfidenceScore, context.TicketRequest.TicketId, context.BoardResponse.BoardId, context.BoardResponse.BoardName ?? "Unknown");
@@ -42,7 +43,7 @@ public class BoardConfidenceHandler : IBoardConfidenceHandler
         return response;
     }
 
-    public async Task<HttpResponseData> HandleNonServiceBoardAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    public async Task<HttpResponseData> HandleNonServiceBoardAsync(TicketClassificationContext context)
     {
         _logger.LogInformation("Non-service board detected (BoardId: {BoardId}, BoardName: {BoardName}) - Moving to Triage Review - TicketId: {TicketId}", 
             context.BoardResponse!.BoardId, context.BoardResponse.BoardName ?? "Unknown", context.TicketRequest.TicketId);

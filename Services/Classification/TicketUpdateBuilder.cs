@@ -1,11 +1,12 @@
 using Ai_Dispatch.Constants;
+using Ai_Dispatch.Models;
 using Ai_Dispatch.Models.Requests;
 
 namespace Ai_Dispatch.Services.Classification;
 
 public class TicketUpdateBuilder : ITicketUpdateBuilder
 {
-    public TicketUpdateRequest Build(DispatchClassificationFunction.TicketClassificationContext context)
+    public TicketUpdateRequest Build(TicketClassificationContext context)
     {
         var ticketUpdate = new TicketUpdateRequest
         {

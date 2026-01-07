@@ -31,7 +31,7 @@ public class NoCompanySpamClassifier : IClassificationStep
         _baseModel = baseModel;
     }
 
-    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(TicketClassificationContext context)
     {
         _logger.LogInformation("No Company detected (CompanyId: {CompanyId}) - Starting SPAM classification - TicketId: {TicketId}", 
             context.TicketRequest.CompanyId, context.TicketRequest.TicketId);

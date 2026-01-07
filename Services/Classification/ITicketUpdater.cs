@@ -1,6 +1,8 @@
+using Ai_Dispatch.Models;
+
 namespace Ai_Dispatch.Services.Classification;
 
 public interface ITicketUpdater
 {
-    Task UpdateAsync(DispatchClassificationFunction.TicketClassificationContext context);
+    Task UpdateAsync(TicketClassificationContext context);
 }

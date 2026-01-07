@@ -31,7 +31,7 @@ public class BoardRoutingClassifier : IClassificationStep
         _reasoningModel = reasoningModel;
     }
 
-    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(TicketClassificationContext context)
     {
         _logger.LogInformation("Starting Board Routing classification - TicketId: {TicketId}, CompanyId: {CompanyId}, CompanyName: {CompanyName}", 
             context.TicketRequest.TicketId, context.TicketRequest.CompanyId, context.TicketRequest.CompanyName ?? "Unknown");

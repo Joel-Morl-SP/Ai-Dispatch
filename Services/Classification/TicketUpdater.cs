@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Ai_Dispatch.Models;
 using Ai_Dispatch.Services;
 
 namespace Ai_Dispatch.Services.Classification;
@@ -14,7 +15,7 @@ public class TicketUpdater : ITicketUpdater
         _connectWiseService = connectWiseService;
     }
 
-    public async Task UpdateAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    public async Task UpdateAsync(TicketClassificationContext context)
     {
         _logger.LogInformation("Preparing final ticket update - TicketId: {TicketId}, Board: {BoardName} (Id: {BoardId}), Type: {TypeName} (Id: {TypeId}), Subtype: {SubtypeName} (Id: {SubtypeId}), Item: {ItemName} (Id: {ItemId}), Priority: {PriorityName} (Id: {PriorityId}), ContactId: {ContactId}, IsVip: {IsVip}, Status: {StatusId}", 
             context.TicketRequest.TicketId, 

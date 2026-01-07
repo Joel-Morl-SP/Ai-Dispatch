@@ -60,10 +60,23 @@ builder.Services.AddSingleton<LoggingService>(provider =>
     return new LoggingService(config, logger);
 });
 
+builder.Services.AddScoped<IConnectWiseHttpClient>(provider =>
+{
+    var logger = provider.GetRequiredService<ILogger<ConnectWiseHttpClient>>();
+    return new ConnectWiseHttpClient(apimBaseUrl, apimSubscriptionKey, dispatchUser, logger);
+});
+
+builder.Services.AddScoped<ITicketUpdateConverter, TicketUpdateConverter>();
+builder.Services.AddScoped<ITicketService, ConnectWiseTicketService>();
+builder.Services.AddScoped<IContactService, ConnectWiseContactService>();
+builder.Services.AddScoped<IActivityService, ConnectWiseActivityService>();
+
 builder.Services.AddScoped<IConnectWiseService>(provider =>
 {
-    var logger = provider.GetRequiredService<ILogger<ConnectWiseService>>();
-    return new ConnectWiseService(apimBaseUrl, apimSubscriptionKey, dispatchUser, logger);
+    var ticketService = provider.GetRequiredService<ITicketService>();
+    var contactService = provider.GetRequiredService<IContactService>();
+    var activityService = provider.GetRequiredService<IActivityService>();
+    return new ConnectWiseService(ticketService, contactService, activityService);
 });
 
 builder.Services.AddSingleton<TeamsAlertService>(provider =>

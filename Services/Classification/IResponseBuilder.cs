@@ -1,9 +1,10 @@
 using Microsoft.Azure.Functions.Worker.Http;
+using Ai_Dispatch.Models;
 
 namespace Ai_Dispatch.Services.Classification;
 
 public interface IResponseBuilder
 {
-    Task<HttpResponseData> BuildSuccessResponseAsync(DispatchClassificationFunction.TicketClassificationContext context);
-    Task<HttpResponseData> HandleErrorAsync(DispatchClassificationFunction.TicketClassificationContext context, Exception ex);
+    Task<HttpResponseData> BuildSuccessResponseAsync(TicketClassificationContext context);
+    Task<HttpResponseData> HandleErrorAsync(TicketClassificationContext context, Exception ex);
 }

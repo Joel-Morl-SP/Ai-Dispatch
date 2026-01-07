@@ -1,9 +1,10 @@
 using Microsoft.Azure.Functions.Worker.Http;
+using Ai_Dispatch.Models;
 
 namespace Ai_Dispatch.Services.Classification;
 
 public interface IBoardConfidenceHandler
 {
-    Task<HttpResponseData> HandleLowBoardConfidenceAsync(DispatchClassificationFunction.TicketClassificationContext context);
-    Task<HttpResponseData> HandleNonServiceBoardAsync(DispatchClassificationFunction.TicketClassificationContext context);
+    Task<HttpResponseData> HandleLowBoardConfidenceAsync(TicketClassificationContext context);
+    Task<HttpResponseData> HandleNonServiceBoardAsync(TicketClassificationContext context);
 }

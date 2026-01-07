@@ -1,6 +1,8 @@
+using Ai_Dispatch.Models;
+
 namespace Ai_Dispatch.Services.Classification;
 
 public interface IProposedNoteProcessor
 {
-    Task ProcessAsync(DispatchClassificationFunction.TicketClassificationContext context);
+    Task ProcessAsync(TicketClassificationContext context);
 }

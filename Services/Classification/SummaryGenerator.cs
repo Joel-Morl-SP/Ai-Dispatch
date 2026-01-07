@@ -25,7 +25,7 @@ public class SummaryGenerator : IClassificationStep
         _baseModel = baseModel;
     }
 
-    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(TicketClassificationContext context)
     {
         _logger.LogInformation("Starting Summary generation - TicketId: {TicketId}", context.TicketRequest.TicketId);
         

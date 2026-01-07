@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Ai_Dispatch.Models;
 using Ai_Dispatch.Services;
 
 namespace Ai_Dispatch.Services.Classification;
@@ -6,15 +7,15 @@ namespace Ai_Dispatch.Services.Classification;
 public class ContactLookup : IContactLookup
 {
     private readonly ILogger<ContactLookup> _logger;
-    private readonly IConnectWiseService _connectWiseService;
+    private readonly IContactService _contactService;
 
-    public ContactLookup(ILogger<ContactLookup> logger, IConnectWiseService connectWiseService)
+    public ContactLookup(ILogger<ContactLookup> logger, IContactService contactService)
     {
         _logger = logger;
-        _connectWiseService = connectWiseService;
+        _contactService = contactService;
     }
 
-    public async Task LookupAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    public async Task LookupAsync(TicketClassificationContext context)
     {
         if (context.TicketRequest.ContactId.HasValue && context.TicketRequest.ContactId.Value > 0)
         {
@@ -23,8 +24,8 @@ public class ContactLookup : IContactLookup
             
             try
             {
-                context.Contact = await _connectWiseService.GetContactByIdAsync(context.TicketRequest.ContactId.Value);
-                context.IsVip = ConnectWiseService.IsVipContact(context.Contact);
+                context.Contact = await _contactService.GetContactByIdAsync(context.TicketRequest.ContactId.Value);
+                context.IsVip = ConnectWiseContactService.IsVipContact(context.Contact);
                 
                 _logger.LogInformation("Contact lookup completed - TicketId: {TicketId}, ContactId: {ContactId}, IsVip: {IsVip}", 
                     context.TicketRequest.TicketId, context.Contact?.Id ?? 0, context.IsVip);

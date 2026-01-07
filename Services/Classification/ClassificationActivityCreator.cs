@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Ai_Dispatch.Models;
 using Ai_Dispatch.Services;
 
 namespace Ai_Dispatch.Services.Classification;
@@ -14,7 +15,7 @@ public class ClassificationActivityCreator : IClassificationActivityCreator
         _connectWiseService = connectWiseService;
     }
 
-    public async Task CreateAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    public async Task CreateAsync(TicketClassificationContext context)
     {
         var activitiesDescription = await _connectWiseService.CreateActivitiesForClassificationAsync(context.TicketRequest.TicketId, context.SpamResponse, context.BoardResponse, 
             context.SpamConfidence, context.BoardConfidence);

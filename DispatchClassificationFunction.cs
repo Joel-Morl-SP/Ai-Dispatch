@@ -3,8 +3,7 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Ai_Dispatch.Constants;
-using Ai_Dispatch.Models.Requests;
-using Ai_Dispatch.Models.Responses;
+using Ai_Dispatch.Models;
 using Ai_Dispatch.Services;
 using Ai_Dispatch.Services.Classification;
 
@@ -24,6 +23,8 @@ public class DispatchClassificationFunction
     private readonly ITicketRequestLogger _ticketRequestLogger;
     private readonly IResponseBuilder _responseBuilder;
     private readonly ILoggerFactory _loggerFactory;
+    private readonly IContactService _contactService;
+    private readonly ITicketService _ticketService;
 
     public DispatchClassificationFunction(
         ILogger<DispatchClassificationFunction> logger,
@@ -36,7 +37,9 @@ public class DispatchClassificationFunction
         IRequestValidator requestValidator,
         ITicketRequestLogger ticketRequestLogger,
         IResponseBuilder responseBuilder,
-        ILoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory,
+        IContactService contactService,
+        ITicketService ticketService)
     {
         _logger = logger;
         _openAIService = openAIService;
@@ -50,6 +53,8 @@ public class DispatchClassificationFunction
         _ticketRequestLogger = ticketRequestLogger;
         _responseBuilder = responseBuilder;
         _loggerFactory = loggerFactory;
+        _contactService = contactService;
+        _ticketService = ticketService;
     }
 
     [Function("DispatchClassificationFunction")]
@@ -114,7 +119,7 @@ public class DispatchClassificationFunction
 
                 var companyTicketFinalizer = new CompanyTicketFinalizer(
                     _logger,
-                    new ContactLookup(_loggerFactory.CreateLogger<ContactLookup>(), _connectWiseService),
+                    new ContactLookup(_loggerFactory.CreateLogger<ContactLookup>(), _contactService),
                     new TicketUpdateBuilder(),
                     new TicketUpdater(_loggerFactory.CreateLogger<TicketUpdater>(), _connectWiseService),
                     new ProposedNoteProcessor(_loggerFactory.CreateLogger<ProposedNoteProcessor>(), _proposedNoteService),
@@ -135,28 +140,5 @@ public class DispatchClassificationFunction
         {
             return await _responseBuilder.HandleErrorAsync(context, ex);
         }
-    }
-
-
-    public class TicketClassificationContext
-    {
-        public TicketRequest TicketRequest { get; set; } = null!;
-        public HttpRequestData Request { get; set; } = null!;
-        public SpamClassificationResponse? SpamResponse { get; set; }
-        public TicketClassificationResponse? TicketResponse { get; set; }
-        public BoardRoutingResponse? BoardResponse { get; set; }
-        public TSIClassificationResponse? TsiResponse { get; set; }
-        public SummaryResponse? SummaryResponse { get; set; }
-        public int SpamConfidence { get; set; }
-        public int BoardConfidence { get; set; }
-        public string? InitialIntent { get; set; }
-        public bool IsNoCompany { get; set; }
-        public bool IsNoCompanyBranch { get; set; }
-        public ContactResponse? Contact { get; set; }
-        public bool IsVip { get; set; }
-        public string? FinalSummary { get; set; }
-        public string? FinalNote { get; set; }
-        public TicketUpdateRequest? TicketUpdate { get; set; }
-        public bool ProposedNoteSent { get; set; }
     }
 }

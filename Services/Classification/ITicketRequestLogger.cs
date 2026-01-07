@@ -1,6 +1,8 @@
+using Ai_Dispatch.Models;
+
 namespace Ai_Dispatch.Services.Classification;
 
 public interface ITicketRequestLogger
 {
-    void LogTicketRequestDetails(DispatchClassificationFunction.TicketClassificationContext context);
+    void LogTicketRequestDetails(TicketClassificationContext context);
 }

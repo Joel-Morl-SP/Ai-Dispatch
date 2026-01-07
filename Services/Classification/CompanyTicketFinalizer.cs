@@ -1,5 +1,6 @@
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using Ai_Dispatch.Models;
 using Ai_Dispatch.Services;
 
 namespace Ai_Dispatch.Services.Classification;
@@ -29,7 +30,7 @@ public class CompanyTicketFinalizer : IClassificationStep
         _responseBuilder = responseBuilder;
     }
 
-    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(DispatchClassificationFunction.TicketClassificationContext context)
+    async Task<HttpResponseData?> IClassificationStep.ExecuteAsync(TicketClassificationContext context)
     {
         await _contactLookup.LookupAsync(context);
 

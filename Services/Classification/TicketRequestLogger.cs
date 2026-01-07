@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Ai_Dispatch.Models;
 
 namespace Ai_Dispatch.Services.Classification;
 
@@ -11,7 +12,7 @@ public class TicketRequestLogger : ITicketRequestLogger
         _logger = logger;
     }
 
-    public void LogTicketRequestDetails(DispatchClassificationFunction.TicketClassificationContext context)
+    public void LogTicketRequestDetails(TicketClassificationContext context)
     {
         _logger.LogInformation("Ticket request received - TicketId: {TicketId}, CompanyId: {CompanyId}, CompanyName: {CompanyName}", 
             context.TicketRequest.TicketId, context.TicketRequest.CompanyId, context.TicketRequest.CompanyName ?? "Unknown");
